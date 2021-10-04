@@ -5,11 +5,11 @@ import pandas as pd
 import os
 import schedule
 
-access = "Mx7GdxxulfojBwPH8ULX45RN9f6tXuKUraBvVeJD"          # 본인 값으로 변경
-secret = "OXuNQOTeOMLtGwdhrDHxJSQF5TigZFTPT7AzpdZr"          # 본인 값으로 변경
+access = "i08DtXroTBITfJX0hxV8487SxG3L6lrl26NzFv0F"          # 본인 값으로 변경
+secret = "7Io54DCTFOyL8aBcDMhUxwS3NBeqIWUb23b9nlZ0"          # 본인 값으로 변경
 upbit = pyupbit.Upbit(access, secret)
 KRWbalance = upbit.get_balance("KRW")
-buy_price = 50000
+buy_price = 100000
 coinlist = pyupbit.get_tickers('KRW')
 STARTLIST = []
 RSILIST = []
@@ -46,7 +46,7 @@ def MAKELIST():
 def MAKEORDER():
     while True:
         for KRWcoin in coinlist:
-            if KRWbalance > buy_price
+            if KRWbalance > buy_price:
                 if KRWcoin in ORDERLIST:
                     NULL=0
                 else:
