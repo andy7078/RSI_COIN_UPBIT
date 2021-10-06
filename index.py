@@ -98,7 +98,6 @@ schedule.every().hour.at(":06").do(DEL)
 
 
 while True:
-    
     for BUYcoin in ORDERLIST:
         
         buynum = ORDERLIST.index(BUYcoin)
@@ -117,10 +116,11 @@ while True:
             else:
                 PASTPRICE.clear()
                 PASTPRICE.append(pyupbit.get_current_price(BUYcoin))
-        schedule.run_pending()
-        now = datetime.datetime.now()
-        nowTime = now.strftime('%H:%M:%S')
-        print(nowTime) # 12:11:32
-        print(ORDERLIST)
-        time.sleep(1)
-        os.system('clear')
+        print(BUYcoin)
+    schedule.run_pending()
+    now = datetime.datetime.now()
+    nowTime = now.strftime('%H:%M:%S')
+    print(nowTime) # 12:11:32
+    print(ORDERLIST)
+    os.system('clear')
+    time.sleep(1)
