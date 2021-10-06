@@ -36,7 +36,7 @@ def MAKELIST():
 
                 RS = _gain / _loss
                 return pd.Series(100 - (100 / (1 + RS)), name="RSI")
-                rsi = rsi(df, 14).iloc[-1]
+            rsi = rsi(df, 14).iloc[-1]
             STARTLIST.append(KRWcoin)
             RSILIST.append(rsi)
             print(STARTLIST)     
@@ -68,7 +68,7 @@ def MAKEORDER():
 
                         RS = _gain / _loss
                         return pd.Series(100 - (100 / (1 + RS)), name="RSI")
-                        rsi = rsi(df, 14).iloc[-1]
+                    rsi = rsi(df, 14).iloc[-1]
                     if RSILIST[coinnum] + 10 <= rsi:
                         print(upbit.buy_market_order(KRWcoin, buy_price))
                         ORDERLIST.append(KRWcoin)
