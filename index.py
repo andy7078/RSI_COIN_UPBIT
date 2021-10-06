@@ -15,6 +15,7 @@ STARTLIST = []
 RSILIST = []
 ORDERLIST = []
 PRICELIST = []
+PASTPRICE = []
 
 def MAKELIST():
     while True:
@@ -72,6 +73,7 @@ def MAKEORDER():
                         print(upbit.buy_market_order(KRWcoin, buy_price))
                         ORDERLIST.append(KRWcoin)
                         PRICELIST.append(pyupbit.get_current_price(KRWcoin))
+                        
                 
         if KRWcoin == "KRW-XEC":
             break
@@ -96,21 +98,29 @@ schedule.every().hour.at(":06").do(DEL)
 
 
 while True:
-    schedule.run_pending()
-    now = datetime.datetime.now()
-    nowTime = now.strftime('%H:%M:%S')
-    print(nowTime) # 12:11:32
-    print(ORDERLIST)
+    
     for BUYcoin in ORDERLIST:
-            buynum = ORDERLIST.index(BUYcoin)
-            if PRICELIST[buynum] - (PRICELIST[buynum]*0.03) >= pyupbit.get_current_price(BUYcoin):
+        
+        buynum = ORDERLIST.index(BUYcoin)
+        
+        if PRICELIST[buynum] - (PRICELIST[buynum]*0.03) >= pyupbit.get_current_price(BUYcoin):
+            print(upbit.sell_market_order(BUYcoin, upbit.get_balance(BUYcoin.replace('KRW-',""))))
+            ORDERLIST.remove(BUYcoin)
+            del PRICELIST[buynum]
+            del PASTPRICE[buynum]
+        else:    
+            if PASTPRICE[buynum] - (PASTPRICE[buynum]*0.03) >= pyupbit.get_current_price(BUYcoin):
                 print(upbit.sell_market_order(BUYcoin, upbit.get_balance(BUYcoin.replace('KRW-',""))))
                 ORDERLIST.remove(BUYcoin)
+                del PASTPRICE[buynum]
                 del PRICELIST[buynum]
-            
-            if PRICELIST[buynum] + (PRICELIST[buynum]*0.05) <= pyupbit.get_current_price(BUYcoin):
-                print(upbit.sell_market_order(BUYcoin, upbit.get_balance(BUYcoin.replace('KRW-',""))))
-                ORDERLIST.remove(BUYcoin)
-                del PRICELIST[buynum]
-    time.sleep(1)
-    os.system('clear')
+            else:
+                PASTPRICE.clear()
+                PASTPRICE.append(pyupbit.get_current_price(BUYcoin))
+        schedule.run_pending()
+        now = datetime.datetime.now()
+        nowTime = now.strftime('%H:%M:%S')
+        print(nowTime) # 12:11:32
+        print(ORDERLIST)
+        time.sleep(1)
+        os.system('clear')
