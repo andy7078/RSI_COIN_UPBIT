@@ -85,14 +85,14 @@ def DEL():
     RSILIST.clear()
                 
 # 매일 특정 HH:MM 및 다음 HH:MM:SS에 작업 실행
-schedule.every().hour.at(":59").do(MAKELIST)
-schedule.every().hour.at(":00").do(MAKEORDER)
+schedule.every().hour.at(":05").do(MAKELIST)
+schedule.every().hour.at(":06").do(MAKEORDER)
 schedule.every().hour.at(":01").do(MAKEORDER)
 schedule.every().hour.at(":02").do(MAKEORDER)
 schedule.every().hour.at(":03").do(MAKEORDER)
 schedule.every().hour.at(":04").do(MAKEORDER)
-schedule.every().hour.at(":05").do(MAKEORDER)
-schedule.every().hour.at(":06").do(DEL)
+#schedule.every().hour.at(":05").do(MAKEORDER)
+#schedule.every().hour.at(":06").do(DEL)
 
 
 
