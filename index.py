@@ -52,28 +52,30 @@ def MAKEORDER():
                 if KRWcoin in ORDERLIST:
                     NULL=0
                 else:
-                    coinnum = coinlist.index(KRWcoin)
-                    df = pyupbit.get_ohlcv(KRWcoin, interval="minute1")
-                    print(KRWcoin)
-                    #KRWbalance = upbit.get_balance("KRW")
-                    def rsi(ohlc: df, period: int = 14):
-                        ohlc["close"] = ohlc["close"]
-                        delta = ohlc["close"].diff()
+                    if KRWbalance > buy_price:
+                        coinnum = coinlist.index(KRWcoin)
+                        df = pyupbit.get_ohlcv(KRWcoin, interval="minute1")
+                        print(KRWcoin)
+                        #KRWbalance = upbit.get_balance("KRW")
+                        def rsi(ohlc: df, period: int = 14):
+                            ohlc["close"] = ohlc["close"]
+                            delta = ohlc["close"].diff()
 
-                        up, down = delta.copy(), delta.copy()
-                        up[up < 0] = 0
-                        down[down > 0] = 0
+                            up, down = delta.copy(), delta.copy()
+                            up[up < 0] = 0
+                            down[down > 0] = 0
 
-                        _gain = up.ewm(com=(period - 1), min_periods=period).mean()
-                        _loss = down.abs().ewm(com=(period - 1), min_periods=period).mean()
+                            _gain = up.ewm(com=(period - 1), min_periods=period).mean()
+                            _loss = down.abs().ewm(com=(period - 1), min_periods=period).mean()
 
-                        RS = _gain / _loss
-                        return pd.Series(100 - (100 / (1 + RS)), name="RSI")
-                    rsi = rsi(df, 14).iloc[-1]
-                    if RSILIST[coinnum] + 10 <= rsi:
-                        print(upbit.buy_market_order(KRWcoin, buy_price))
-                        ORDERLIST.append(KRWcoin)
-                        PRICELIST.append(pyupbit.get_current_price(KRWcoin))
+                            RS = _gain / _loss
+                            return pd.Series(100 - (100 / (1 + RS)), name="RSI")
+                        rsi = rsi(df, 14).iloc[-1]
+                        if RSILIST[coinnum] + 10 <= rsi:
+                            print(upbit.buy_market_order(KRWcoin, buy_price))
+                            ORDERLIST.append(KRWcoin)
+                            PRICELIST.append(pyupbit.get_current_price(KRWcoin))
+                            PASTPRICE.append(pyupbit.get_current_price(BUYcoin))
                     
                         
             time.sleep(0.2)        
