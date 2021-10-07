@@ -75,7 +75,7 @@ def MAKEORDER():
                             print(upbit.buy_market_order(KRWcoin, buy_price))
                             ORDERLIST.append(KRWcoin)
                             PRICELIST.append(pyupbit.get_current_price(KRWcoin))
-                            PASTPRICE.append(pyupbit.get_current_price(BUYcoin))
+                            PASTPRICE.append(pyupbit.get_current_price(KRWcoin))
                     
                         
             time.sleep(0.2)        
