@@ -107,12 +107,13 @@ while True:
     nowTime = now.strftime('%H:%M:%S')
     print(nowTime) # 12:11:32
     print(ORDERLIST)
+    print(PASTPRICE)
     time.sleep(1)
     os.system('clear')
     for BUYcoin in ORDERLIST:
         
         buynum = ORDERLIST.index(BUYcoin)
-        
+        print(BUYcoin)
         if PRICELIST[buynum] - (PRICELIST[buynum]*0.03) >= pyupbit.get_current_price(BUYcoin):
             print(upbit.sell_market_order(BUYcoin, upbit.get_balance(BUYcoin.replace('KRW-',""))))
             ORDERLIST.remove(BUYcoin)
@@ -127,5 +128,5 @@ while True:
             else:
                 PASTPRICE.clear()
                 PASTPRICE.append(pyupbit.get_current_price(BUYcoin))
-        print(BUYcoin)
+        
     
