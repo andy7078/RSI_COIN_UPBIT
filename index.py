@@ -113,7 +113,14 @@ while True:
     for BUYcoin in ORDERLIST:
         
         buynum = ORDERLIST.index(BUYcoin)
+        print("TEST")
         print(BUYcoin)
+        print(buynum)
+        print(PASTPRICE[buynum])
+        print(PRICELIST[buynum]*0.03)
+        print(pyupbit.get_current_price(BUYcoin))
+        
+        print("TEST")
         if PRICELIST[buynum] - (PRICELIST[buynum]*0.03) >= pyupbit.get_current_price(BUYcoin):
             print(upbit.sell_market_order(BUYcoin, upbit.get_balance(BUYcoin.replace('KRW-',""))))
             ORDERLIST.remove(BUYcoin)
