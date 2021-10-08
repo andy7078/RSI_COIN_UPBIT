@@ -126,7 +126,6 @@ while True:
                 del PASTPRICE[buynum]
                 del PRICELIST[buynum]
             else:
-                PASTPRICE.clear()
-                PASTPRICE.append(pyupbit.get_current_price(BUYcoin))
+                PASTPRICE[buynum] = pyupbit.get_current_price(BUYcoin)
         
     
