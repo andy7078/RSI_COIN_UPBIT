@@ -11,8 +11,8 @@ upbit = pyupbit.Upbit(access, secret)
 KRWbalance = upbit.get_balance("KRW")
 buy_price = 100000
 coinlist = pyupbit.get_tickers('KRW')
-STARTLIST = []
-RSILIST = []
+
+TIMEPRICE = []
 ORDERLIST = []
 PRICELIST = []
 PASTPRICE = []
@@ -20,27 +20,8 @@ PASTPRICE = []
 def MAKELIST():
     while True:
         for KRWcoin in coinlist:
-            df = pyupbit.get_ohlcv(KRWcoin, interval="minute1")
             print(KRWcoin)
-            #KRWbalance = upbit.get_balance("KRW")
-            def rsi(ohlc: df, period: int = 14):
-                ohlc["close"] = ohlc["close"]
-                delta = ohlc["close"].diff()
-
-                up, down = delta.copy(), delta.copy()
-                up[up < 0] = 0
-                down[down > 0] = 0
-
-                _gain = up.ewm(com=(period - 1), min_periods=period).mean()
-                _loss = down.abs().ewm(com=(period - 1), min_periods=period).mean()
-
-                RS = _gain / _loss
-                return pd.Series(100 - (100 / (1 + RS)), name="RSI")
-            rsi = rsi(df, 14).iloc[-1]
-            STARTLIST.append(KRWcoin)
-            RSILIST.append(rsi)
-            print(STARTLIST)     
-            
+            TIMEPRICE.append(pyupbit.get_current_price(KRWcoin))
             time.sleep(0.2)
         if KRWcoin == "KRW-XEC":
             break
@@ -48,46 +29,26 @@ def MAKELIST():
 def MAKEORDER():
     while True:
         for KRWcoin in coinlist:
-            if KRWbalance > buy_price:
-                if KRWcoin in ORDERLIST:
-                    NULL=0
-                else:
-                    if KRWbalance > buy_price:
-                        coinnum = coinlist.index(KRWcoin)
-                        df = pyupbit.get_ohlcv(KRWcoin, interval="minute1")
-                        print(KRWcoin)
-                        #KRWbalance = upbit.get_balance("KRW")
-                        def rsi(ohlc: df, period: int = 14):
-                            ohlc["close"] = ohlc["close"]
-                            delta = ohlc["close"].diff()
+            if KRWcoin in ORDERLIST:
+                continue
+            else:
+                if KRWbalance > buy_price:
+                    coinnum = coinlist.index(KRWcoin)
+                    print(KRWcoin)
+                    if TIMEPRICE[coinnum] + (TIMEPRICE[coinnum]*0.015) <= pyupbit.get_current_price(KRWcoin):
+                        print(upbit.buy_market_order(KRWcoin, buy_price))
+                        ORDERLIST.append(KRWcoin)
+                        PRICELIST.append(pyupbit.get_current_price(KRWcoin))
+                        PASTPRICE.append(pyupbit.get_current_price(KRWcoin))
 
-                            up, down = delta.copy(), delta.copy()
-                            up[up < 0] = 0
-                            down[down > 0] = 0
-
-                            _gain = up.ewm(com=(period - 1), min_periods=period).mean()
-                            _loss = down.abs().ewm(com=(period - 1), min_periods=period).mean()
-
-                            RS = _gain / _loss
-                            return pd.Series(100 - (100 / (1 + RS)), name="RSI")
-                        rsi = rsi(df, 14).iloc[-1]
-                        if RSILIST[coinnum] + 10 <= rsi:
-                            print(upbit.buy_market_order(KRWcoin, buy_price))
-                            ORDERLIST.append(KRWcoin)
-                            PRICELIST.append(pyupbit.get_current_price(KRWcoin))
-                            PASTPRICE.append(pyupbit.get_current_price(KRWcoin))
-                    
-                        
-            time.sleep(0.2)        
+            time.sleep(0.2)
         if KRWcoin == "KRW-XEC":
             break
 
-            
-                
+
 def DEL():
-    STARTLIST.clear()
-    RSILIST.clear()
-                
+    TIMEPRICE.clear()
+
 # 매일 특정 HH:MM 및 다음 HH:MM:SS에 작업 실행
 schedule.every().hour.at(":59").do(MAKELIST)
 schedule.every().hour.at(":00").do(MAKEORDER)
@@ -111,7 +72,7 @@ while True:
     time.sleep(1)
     os.system('clear')
     for BUYcoin in ORDERLIST:
-        
+
         buynum = ORDERLIST.index(BUYcoin)
         print("TEST")
         print(BUYcoin)
@@ -119,14 +80,14 @@ while True:
         print(PASTPRICE[buynum])
         print(PRICELIST[buynum]*0.03)
         print(pyupbit.get_current_price(BUYcoin))
-        
         print("TEST")
+
         if PRICELIST[buynum] - (PRICELIST[buynum]*0.03) >= pyupbit.get_current_price(BUYcoin):
             print(upbit.sell_market_order(BUYcoin, upbit.get_balance(BUYcoin.replace('KRW-',""))))
             ORDERLIST.remove(BUYcoin)
             del PRICELIST[buynum]
             del PASTPRICE[buynum]
-        else:    
+        else:
             if PASTPRICE[buynum] - (PASTPRICE[buynum]*0.03) >= pyupbit.get_current_price(BUYcoin):
                 print(upbit.sell_market_order(BUYcoin, upbit.get_balance(BUYcoin.replace('KRW-',""))))
                 ORDERLIST.remove(BUYcoin)
@@ -134,5 +95,4 @@ while True:
                 del PRICELIST[buynum]
             else:
                 PASTPRICE[buynum] = pyupbit.get_current_price(BUYcoin)
-        
-    
+
