@@ -95,4 +95,4 @@ while True:
                 del PRICELIST[buynum]
             else:
                 PASTPRICE[buynum] = pyupbit.get_current_price(BUYcoin)
-
+        time.sleep(0.2)
